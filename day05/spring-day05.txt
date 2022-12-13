@@ -1,0 +1,38 @@
+1. 경로이동
+	- Contextpath 를 추가해서 이동
+	- 프로젝트이름/index.html
+	  프로젝트이름/user/userMain.jsp
+	
+2. @PathVariable
+
+	@GetMapping("/member/{name}") // @PathVariable 뒤 변수명은 동일하면 생략가능
+	public String memberFind(@PathVariable("name") String name){
+
+	}
+
+	// 여러 개
+	@GetMapping("/member/{id}/{name}")
+	public String memberFind(@PathVariable("id") String id,
+					   @PathVariable("name") String name){
+
+	}
+
+3. @ModelAttribute
+	- 요청 파라미터 처리
+		-> Item 객체를 생성하고, 요청 파라미터 값을 프로퍼티 접근법 (set..)으로 입력해줌
+		-> model.addAttribute("item", item); 도 대신해줌
+		-> @ModelAttribute("이름 설정")
+
+4. RedirectAttributes
+	- redirect 여러 속성
+
+
+
+
+
+
+
+
+
+
+

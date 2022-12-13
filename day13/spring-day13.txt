@@ -1,0 +1,37 @@
+1. 프로젝션
+	- select 절에 조회할 대상을 지정하는 것
+	- select m from Member m
+		-> Member 엔티티 조회
+	- select m.team from Member m
+		-> Member와 관련된 team을 가지고 온다.
+	- select m.username, m.age from Member m
+		-> Member 엔티티에 있는 username, age를 조회
+
+2. 페이징 처리
+	- setFirstResult(int startPoint)	: 조회 시작 위치(0부터 시작) 	-> 10
+	- setMaxResults(int maxResults)	: 조회할 데이터 수			-> 20
+	- 몇 번째부터 몇 개 가지고 올래 ? 			  -> 10번 째 부터 20개 가져오기
+
+3. JPA 서브쿼리 한계
+	- where, having 절에서 사용 가능 -> JPA 표준 스펙
+	- select 절에서도 가능 -> 하이버네이트에서 지원
+	- from 절의 서브쿼리는 현재 JPQL에서 불가능
+
+4. 애플리케이션 아키텍쳐
+	- Controller, web 	: 웹 계층
+	- service 			: 비즈니스 로직, 트랜잭션 처리
+	- repository			: JPA를 직접 사용하는 계층, 엔티티 매니저 사용
+	- domain 			: 엔티티가 모여있는 계층, 모든 계층에서 사용가능
+	(domain에는 select해서 담아오는 내용만.. form에서 담아오는건 DTO따로만들어주기)
+	(Entity에서 뭔가 하나라도 비즈니스 로직이 추가되면 DTO따로제작)
+
+
+
+
+
+
+
+
+
+
+

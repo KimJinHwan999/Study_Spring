@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<form action="/member/createMember" method="post">
+		<div>
+			<label for="genderNum">성별 번호</label>
+			<input type="text" name="genderNum" id="genderNum">
+		</div>
+		<div>
+			<label for="name">이름</label>
+			<input type="text" name="name" id="name">
+		</div>
+		<div>
+			<label for="phoneNum">전화 번호</label>
+			<input type="text" name="phoneNum" id="phoneNum">
+		</div>
+		<button type=submit>제출</button>
+	</form>
+</body>
+</html>

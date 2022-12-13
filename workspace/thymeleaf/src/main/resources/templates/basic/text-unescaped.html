@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1>text vs utext</h1>
+	<ul>
+		<li>th:text = <span th:text="${data}"></span></li>
+		<li>th:utext = <span th:utext="${data}"></span></li>
+	</ul>
+	
+	<h1>
+		<!-- th:inline = "none"을 넣어주면 타임리프로 해석하지 않음 -->
+		<span th:inline="none">[[...]] vs [(...)]</span>
+	</h1>
+ 	<ul>
+ 		<li><span th:inline="none">[[...]] = </span>[[${data}]]</li>
+ 		<li><span th:inline="none">[(...)] = </span>[(${data})]</li>
+ 	</ul>
+</body>
+</html>

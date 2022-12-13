@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+<link href="./css/bootstrap.min.css" 
+	  th:href="@{/css/bootstrap.min.css}"
+	  rel="stylesheet">
+</head>
+<body>
+	<div class="container" style="max-width: 600px">
+		<div class="py-5 text-center">
+			<h2>상품 목록</h2>
+		</div>
+		<div class="row">
+			<div class="col">
+				<button class="btn btn-primary float-end" 
+						onclick="location.href='addForm.html'" 
+						th:onclick="|location.href='@{/basic/items/add}'|"
+						type="button">
+					상품 등록
+				</button>
+			</div>
+		</div>
+		<hr class="my-4">
+		<div>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>상품명</th>
+						<th>가격</th>
+						<th>수량</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="item : ${items}">
+						<td>
+							<!-- /basic/items/아이템의ID(1,2,3,4) -->
+							<!-- ${item.Id}를 파라미터 말고 직접사용하려면 탈출문자를 써줘야함(타임리프에서 지원을 안해줌) -->
+							<a th:text="${itemStat.count}" href="item.html" th:href="@{/basic/items/{itemId}(itemId=${item.Id})}">회원 id</a>
+						</td>
+						<td>
+							<!-- /basic/items/아이템의ID(1,2,3,4) -->
+							<!-- 원래 파라미터를 ?변수=값 으로 받는데, 여기서는 그대로 파라미터를 받아줌 -->
+							<a th:text="${item.itemName}" href="item.html" th:href="@{|/basic/items/${item.id}|}">테스트 상품1</a>
+						</td>
+						<td th:text="${item.price}">10000</td>
+						<td th:text="${item.quantity}">10</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<!-- /container -->
+</body>
+</html>

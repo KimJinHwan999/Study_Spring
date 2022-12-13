@@ -1,0 +1,142 @@
+JSP(HTML + CSS + JS), Mybatis, Oracle (옛날 프로젝트 유지보수)
+
+SpringFramework, JSP, Mybatis (이게 제일 많음 - 신규 / 유지보수)
+
+Spring Boot, thymleaf(HTML + CSS + JS), JPA, QueryDSL (신규개발)
+
+1. Framework란
+	1-1. Framework란
+		- '뼈대나 근간'을 이루는 코드들의 묶음
+		- 프로그램의 기본 흐름이나 구조는 정하고, 이 구조에 자신의 코드를 
+		추가하는 방식으로 개발할 수 있도록 하는 프로그래밍의 기본 틀을 의미
+		- 개발에 필요한 구조가 제공되고, 여기에 필요한 부분을 조립하는 형태로 
+		개발이 진행된다.
+		- 소형차를 만들기 위해 뼈대를 사용하는데, 이 뼈대로 SUV를 만들 수는 없
+		다. (Framework)
+
+	1-2. 라이브러리란
+		- 라이브러리란 자주 사용되는 로직을 재사용하기 편리하도록 잘 정리한 
+		일련의 코드들의 집합
+		- 바퀴나, 선루프, 헤드라이트 등은 비교적 다른 종류로 쉽게 바꿀 수 있다.
+
+2. STS(Spring Tool Suite)
+	- https://github.com/spring-projects/toolsuite-distribution/
+	wiki/Spring-Tool-Suite-3
+
+3. Spring boot 특징
+	3-1. Embeded Tomcat
+		- 스프링 부트는 내장형 톰캣을 가지고 있기 때문에 별도의 톰갯을 설정할 필요가
+		없어졌으며, 그렇기 때문에 독립적으로 실행가능한 jar로 손쉽게 배포가 가능해졌다.
+
+	3-2. AutoConfiguratior
+		- 설정을 어노테이션을 이용하여 대신한다.
+		
+4. 스프링부트 프로젝트 세팅
+	4-1. project : 사용할 빌드 툴 선택 (Maven/Gradle)
+		- Maven, Gradle은 프로젝트에 필요한 의존성을 관리하는 빌드
+		라이프 사이클을 관리해주는 툴이다. 과거에는 Maven을, 최근에는 Gradle을
+		사용하는 추세이다.
+
+	4-2. Spring boot : 버전선택
+		- SNAPSHOT(개발중인 버전), M(Minor, 정식 릴리즈 되지 않은 버전), RC2
+		아무것도 붙어있지 않은 것이 정식 릴리즈 된 버전이다.
+
+	4-3. Group : 기업의 도메인 명
+	4-4. Artifact : 빌드 결과물 (프로젝트 명)
+
+-------------------------------------------------------------------------
+	스프링 부트 작업 순서
+
+	- 스프링 사용설명서
+	스프링 사이트 -> projects -> spring boot -> learn -> 2.7.5 -> 
+	reference doc. -> web
+
+	- Thymeleaf 사용 설명서
+	https://www.thymeleaf.org/ -> docs -> readonline
+
+	- Spring initialzr 세팅
+	0. Gradle Project -> Java -> 2.7.5(안정화된 버전 선택) 
+	1. Artifact, name -> core
+	2. pacakge name -> com.koreait.core
+	3. Group -> com.koreait
+	4. jar
+ 	5. 11
+	6. dependencies -> Spring web, thymleaf 추가
+	7. 폴더 생성 원하는 경로에 압축 풀어주기
+	
+	
+	- STS 실행 이후
+	0. import files -> Gradle 에서 만들어놓은 작업폴더 (~/core)로 경로 잡아주기
+	
+	1. 폴더 임포트 한 이후 application.properties에 server.port=9090으로 
+	포트넘버 바꿔주기, spring.thymeleaf.cache=false 로 서버 재기동 안해도 변화 볼
+	수 있도록 바꿔주기 
+
+	2. Help -> install new software -> latest Eclipse Release 검색
+	-> Web, XML, Java EE and OSGI Enterprise Development	
+	-> Eclipse Java EE Developer Tools부터 아래로 6개 (총 7개) 
+	Eclipse XSL Developer Tools 까지 -> 
+	-> http://www.thymeleaf.org/eclipse-plugin-update-site/ 검색
+	-> thymeleaf 2개 설치
+	-> 다운로드 받고 STS 다시 실행 해주기
+
+	(자동완성 안나올 때
+		1. 재부팅
+		2. 프로젝트 마우스 오른쪽 클릭 -> configure -> add Thymeleaf Nature -> 재부팅)
+
+	3. 서버 재시작 해서 구동되는지 확인해주고, 
+	src/main/resources -> static 경로 안에 index.html 만들어주기 (대문페이지)
+
+-------------------------------------------------------------------------
+5. Spring
+	- @Controller : Controller에 붙여준다. 해당 mapping url을 찾는다.
+	- @GetMapping : get 방식의 요청
+	- 스프링부트 템플릿 엔진 기본 viewName 매핑
+	  resources : templates/ + {viewName} + .html
+	(주소창에 칠 때 스프링 프레임워크가 templates/ 와 .html을 대신 쳐주니까, uri와 
+	viewName만 적어주면 됨)
+-------------------------------------------------------------------------
+	Dispatcher Servlet : 모든 요청을 가장 먼저 받아오는 곳 (FrontController)
+	-> 프레임워크가 대신 받아줌(서블릿 클래스 상속받을 필요도, 만들 필요도 없음)
+
+		- View Resolver :  화면만 넘겨줄 때 /String 타입으로 문자열만 넘겨줄 때 ?
+-------------------------------------------------------------------------
+6. DispatcherServlet
+	- 스프링 MVC도 프론트 컨트롤러 패턴으로 구현되어 있다.
+	- 스프링 MVC의 프론트 컨트롤러가 바로 디스패처 서블릿이다.
+	- DispatcherServlet -> FrameWorkServlet -> HttpServletBean -> 
+	HttpServlet (타고, 타고, 타고 가면 원래 있던 HttpServlet을 상속받고 있는 것.)
+	
+7. ViewResolver란?
+	- 실행할 뷰를 찾는 일을 한다.
+	- 페이지 컨트롤러가 리턴한 뷰 이름에 해당하는 뷰 객체를 매핑하는 역할
+
+8. Model이란?
+	- Controller에서의 데이터를 Model에 담는다. view는 Model에 담겨있는 데이터만
+	골라서 화면에 바인딩 해준다.
+	- HashMap형태를 갖고 있고, key, value값을 저장한다.
+	- request.setAttribute()과 비슷한 역할을 한다.
+
+9. ModelAndView
+	- Model에서 View 영역이 좀 더 확장
+	- Model과 View를 동시에 설정이 가능하며, 컨트롤러는 ModelAndView 객체만 
+	리턴하지만, Model과 View가 모두 리턴 가능하다.
+
+10. 일반적인 웹 애플리케이션 계층 구조
+	- 컨트롤러 : 웹 MVC의 컨트롤러 역할
+	- 서비스 : 핵심 비즈니스 로직 구현 (비즈니스 영역이 간단하면 분리 안하고 작업)
+	- 레파지토리 : 데이터베이스에 접근, 도메인 객체를 DB에 저장하고 관리
+	- 도메인 : 비즈니스 처리를 위한 도메인 객체 
+	(예 : 회원, 주문, 쿠폰 등등 주로 데이터베이스에 저장하고 관리되는 객체)	
+	
+
+
+
+
+
+
+
+
+
+
+

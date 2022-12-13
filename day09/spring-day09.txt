@@ -1,0 +1,258 @@
+1. JPQL
+	- JPA를 사용하면 객체를 중심으로 개발
+	- 문제는 검색 쿼리 -> 검색을 할 때도 테이블이 아닌 엔티티 객체를 대상으로 검색
+	- 모든 DB데이터를 객체로 변환해서 검색하는 것은 불가능
+	- 검색 조건이 포함된 SQL이 필요
+	- JPA는 SQL을 추상화한 JPQL이라는 객체 지향 쿼리 언어 제공
+	- SQL과 문법 유사, select, from, where, group by, having, join 지원
+	- SQL : 데이터베이스 테이블을 대상으로 쿼리
+	- JPQL : 객체를 대상으로 쿼리
+
+2. JPA
+	- 객체와 관계형 데이터베이스 매핑하기 (@Entity, @Id)
+
+3. 영속성 컨텍스트
+	- JPA를 이해하는데에 가장 중요한 용어
+	- 객체의 엔티티를 영구 저장하는 환경 이라는 뜻
+	- EntityManager.persist(entity);
+		-> "entity"에 들어가는 객체 (Member, Team, .. 등)를 DB에 저장하는 구나..
+		싶지만 좀 더 깊은 의미가 있다.
+		-> 처음부터 DB에 저장하는게 아니라 영속성 컨텍스트 라는 곳에 저장한다.
+	- 엔티티 매니저를 통해서 영속성 컨텍스트에 접근
+	(DB와의 연결을 최소화하고 진짜 필요할 때만 연결하려고 영속성 컨텍스트라는 논리적인 공간을
+	JPA가 가지고 있는 것. -> 통신을 너무 자주하면 느려지기 때문에..)
+
+4. 엔티티 생명주기
+	- 비영속(new/transient)
+		: 영속성 컨텍스트와 전혀 관계가 없는 새로운 상태
+	- 영속(managed)
+		: 영속성 컨텍스트에 관리되는 상태
+	- 준영속(detached)
+		: 영속성 컨텍스트에 저장되었다가 분리된 상태
+	- 삭제(removed)
+		: 삭제된 상태
+
+	4-1. 비영속 - JPA와 전혀 상관 없는 상태
+
+		Member member = new Member();
+		member.setId("userA");
+		member.setUsername("회원1");
+
+	4-2. 영속 - JPA에 속해 있는 상태
+		
+		em.persist(member);
+
+	4-3. 준영속 - 회원 엔티티를 영속성 컨텍스트에서 분리, 준영속 상태
+	
+		em.detach(member);
+
+	4-4. 삭제 - 객체 삭제를 요청한 상태
+		
+		em.remove(member);
+
+5. 영속성 컨텍스트의 이점
+	- 1차 캐시
+	- 동일성 보장
+	- 트랜잭션을 지원하는 쓰기 지연
+	- 변경 감지(Dirty Checking)
+	- 지연 로딩(Lazy Loading)
+
+6. 엔티티 조회, 1차 캐시
+
+	Member member = new Member();
+	member.setId("member1");
+	member.setUsername("회원1");
+	
+	// 영속상태
+	// 1차 캐시에서 보관해서 가지고있음
+	em.persist(member); 
+
+
+	// 조회 
+	// 영속 컨텍스트 1차 캐시 안에서 찾아옴 (DB 안 다녀옴)
+	Member findMember = em.find(Member.class, "member1");
+
+7. 데이터베이스에서 조회
+
+	// 	"member2"는 1차캐시엔 없지만 DB에는 있음 
+	//	-> 1차 캐시를 전부 뒤진 이후 없을 때 DB를 조회 함
+	//	-> 영속 컨텍스트 1차 캐시에 "member2" 저장
+	//	-> 사용자에게 반환
+
+	Member findMember2 = em.find(Member.class, "member2");
+
+8. 영속 엔티티의 동일성 보장
+
+	Member a = em.find(Member.class, "member1");
+	Member b = em.find(Member.class, "member1");
+
+9. 엔티티 등록 트랜잭션을 지원하는 쓰기 지연
+	
+	tx.begin();	// 트랜잭션 시작
+
+	em.persist(memberA);
+	em.persist(memberB);
+	// 여기까지는 insert sql을 데이터베이스에 보내지 않는다.
+	// 하지만 동시에 쓰기지연 SQL 저장소에 INSERT SQL을 담아둔다.
+
+	// 커밋하는 순간 데이터베이스에 쓰기지연 저장소이 있는 insert sql을 flush 메서드로 DB에 보낸다.
+	tx.commit();	// 트랜잭션 커밋
+
+10. 엔티티 수정 변경 감지 (Dirty Checking)
+	- flush() 가 호출되는 시점에 (commit()으로도 작동함) 
+	Entity와 스냅샷을 전부 비교 후 변경이 된 것을 감지 (Dirty Checking) 한 후에 
+	update 쿼리를 작성 후, update 쿼리를 날린다.
+	
+	tx.begin();	// 트랜잭션 시작
+	
+	// 영속 엔티티 조회
+	Member memberA = em.find(Member.class, "memberA");
+	
+	memberA.setUsername("hello");
+	memberA.setAge(10);
+
+	// em.update(member); -> 이런건 없어도 값이 변경이 됨 
+	// 기존 Entity의 값은 setUsername과 setAge로 수정됨 & 스냅샷에는 기존버전 저장되어있음
+		-> 값이 달라진걸 Entity와 스냅샷의 비교를 통해 영속 컨텍스트가 파악
+		-> 쓰기지연저장소에 update 문이 저장됨
+		-> 외부에서 flush() 메서드를 통해 db에 update문을 전달하고 커밋시킴
+
+
+	tx.commit();	// 트랜잭션 커밋
+
+11. 엔티티 삭제
+	
+	// 삭제 대상 엔티티 조회
+	Member memberA = em.find(Member.class, "memberA");
+
+	em.remove(memberA);	// 엔티티 삭제
+
+12. 플러시 flush()
+	- 영속성 컨텍스트의 변경 내용을 데이터베이스에 반영
+	
+	12-1. 플러시 발생
+		- 변경 감지
+		- 수정된 엔티티 쓰기 지연 SQL 저장소에 등록
+		- 쓰기 지연 SQL 저장소의 쿼리를 데이터베이스에 전송
+
+	12-2. 영속성 컨텍스트를 플러시 하는 방법
+		- em.flush()		: 직접호출
+		- tx.commit() 	: 플러시 자동호출
+		- JPQL 쿼리 실행 	: 플러시 자동 호출
+
+13. 준영속상태
+	- 영속 -> 준영속
+	- 준영속 : 영속 상태의 엔티티가 영속성 컨텍스트에서 분리 (detached)
+	- 영속성 컨텍스트가 제공하는 기능을 사용 하지 못함
+
+	- em.detach(entity) 	: 특정 엔티티만 준영속 상태로 전환
+	- em.clear()			: 영속성 컨텍스트를 완전히 초기화
+	- em.close()			: 영속성 컨텍스트를 종료
+
+14. 엔티티 매핑 소개
+	- 객체와 테이블 매핑 	: @Entity, @Table
+	- 필드와 컬럼 매핑 	: @Column
+	- 기본 키 매핑		: @Id
+	- 연관관계 매핑		: @ManyToOne, @JoinColumn
+
+15. 객체와 테이블 매핑 - @Entity
+	- @Entity가 붙은 클래스는 JPA가 관리, 엔티티라 한다.	
+	- JPA를 사용하여 테이블과 매핑할 클래스는 @Entity 필수
+	- 기본 생성자 필수
+	- enum, interface 클래스는 @Entity 사용 불가
+	- 저장할 필드 (전역변수) 에 final 사용 불가
+	- 속성 : name
+		JPA에서 사용할 엔티티 이름을 지정한다.
+		기본값을 쓸 것을 권장
+
+16. @Table
+	- 엔티티와 매핑할 테이블 지정
+	
+	16-1 속성
+		- name					: 매핑할 테이블 이름
+		- catalog					: 데이터베이스 catalog 매핑
+		- schema					: 데이터베이스 schema 매핑
+		- DDL(uniqueConstraints)	: DDL 생성 시에 유니크 제약 조건 생성
+
+17. 데이터베이스 자동 생성
+	- DDL을 애플리케이션 실행 시점에 테이블 자동 생성
+	- 테이블 중심 -> 객체 중심
+	- 데이터베이스 방언을 활용해서 데이터베이스에 맞는 적절한 DDL을 생성
+
+18. hibernate.hbm2ddl.auto 옵션
+	- 데이터베이스 스키마 자동생성 옵션
+	- create		: 기존 테이블 삭제 후 다시 생성(drop + create)
+	- create-drop	: create와 같으나 종료시점에 테이블 drop
+	- update		: 변경분만 반영
+	- validate 	: 엔티티와 테이블이 정상 매핑되었는지만 확인
+	- none		: 사용하지 않음
+
+19. 제약조건 추가 : 회원이름 필수, 길이는 10자
+	- @Column(nullable = fasle, length = 10)
+	- @Temporal	: 날짜 타입 매핑
+	- @Enumerated	: enum 타입 매핑
+	- @Lob		: BLOB, CLOB 매핑(대용량 데이터 저장)
+	- @Transient	: 특정 필드를 컬럼에 매핑하지 않음(메모리상에 보관만 하고 DB엔 드러내기 싫을 때)
+
+	19-1. @Column
+		- name		: 필드와 매핑할 테이블의 컬럼 이름
+		- nullable	: null 값의 허용 여부 설정
+					: false로 설정하면 not null 제약조건 붙는다.
+		- unique		: 한 컬럼에 대해 unique하게 제약조건을 걸 때 사용
+		- length		: 문자 길이 제약 조건, String 타입에만 사용
+
+20. 기본 키 매핑
+	- @Id
+	- @GenerateValue
+
+	20-1. @GeneratedValue
+		- 자동생성 -> 전략
+			-> identity		: 데이터베이스에 위임
+			-> sequence		: 데이터베이스 시퀀스 오브젝트 사용
+							@SequenceGenerator 필요
+			-> table			: 키 생성용 테이블 사용, 모든 DB에서 사용
+							@TableGenerator
+			-> auto			: 방언에 따라 자동 지정, 기본 값
+
+
+		- @SequenceGenerator
+			-> name 			: 식별자 이름
+			-> sequenceName 	: 데이터베이스 등록되어 있는 시퀀스 이름
+								(hibernate_sequence)
+			-> initialValue	: 시퀀스 DDL을 생성할 때 처음 시작하는 수 지정
+			-> allocationSize	: 데이터베이스 시퀀스 값이 하나씩 증가하도록 설정
+								이 값을 1로 설정, 
+			-> catalog, schema	: 데이터베이스 catalog, schema 이름 설정
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
