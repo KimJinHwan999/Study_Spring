@@ -1,0 +1,5 @@
+package com.koreait.Springtest18.memberDTO;
+
+public enum Position {
+	STAFF, SENIOR_STAFF, ASSISTANT_MANAGER, MANAGER, SENIOR_MANAGER, GENERALMANAGER, DIRECTOR, PRESIDENT
+}

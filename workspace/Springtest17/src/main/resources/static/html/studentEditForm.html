@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<link href="../css/bootstrap.min.css" rel="stylesheet">
+<style>
+.container {
+	max-width: 560px;
+}
+</style>
+</head>
+<body>
+	<div class="container">
+		<div class="py-5 text-center">
+			<h2>학생 수정 폼</h2>
+		</div>
+		<form action="student.html" method="post">
+			<div>
+				<label for="studentId">학번</label> 
+				<input type="text" id="studentId" name="studentId" class="form-control" value="1" readonly>
+			</div>
+			<div>
+				<label for="studentName">학생명</label> 
+				<input type="text" id="studentName" name="studentName" class="form-control" value="학생A">
+			</div>
+			<div>
+				<label for="age">나이</label> 
+				<input type="text" id="age" name="age" class="form-control" value="10000">
+			</div>
+			<div>
+				<label for="subject">과목수</label> 
+				<input type="text" id="subject" name="subject" class="form-control" value="5">
+			</div>
+			<div>
+				<label for="phone">전화번호</label> 
+				<input type="text" id="phone" name="phone" class="form-control" value="01012345678">
+			</div>
+			<div>
+				<label for="addr">주소</label> 
+				<input type="text" id="addr" name="addr" class="form-control" value="역삼1동">
+			</div>
+			<hr class="my-4">
+			<div class="row">
+				<div class="col">
+					<button class="w-100 btn btn-primary btn-lg" type="submit">
+						저장
+					</button>
+				</div>
+				<div class="col">
+					<button class="w-100 btn btn-secondary btn-lg" onclick="location.href='student.html'" type="button">
+						취소
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<!-- /container -->
+</body>
+</html>
